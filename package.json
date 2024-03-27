@@ -1,0 +1,19 @@
+{
+  "name": "mtg_spoiler_bot",
+  "version": "1.0.0",
+  "description": "discord bot to post Magic: the Gathering spoilers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Terrhy999/MTG-Spoiler-Bot.git"
+  },
+  "author": "terrhy999",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Terrhy999/MTG-Spoiler-Bot/issues"
+  },
+  "homepage": "https://github.com/Terrhy999/MTG-Spoiler-Bot#readme"
+}
