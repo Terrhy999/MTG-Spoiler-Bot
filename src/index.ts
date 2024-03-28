@@ -1,4 +1,5 @@
 import Discord = require("discord.js");
+import fetch from "node-fetch";
 import "dotenv/config";
 
 const startBot = () => {
@@ -38,4 +39,13 @@ const startBot = () => {
   void client.login(process.env["BOT_TOKEN"]);
 };
 
-startBot();
+const fetchSpoilers = async () => {
+  const response = await fetch(
+    "https://www.mythicspoiler.com/newspoilers.html",
+  );
+  const body = await response.text();
+  console.log(body);
+};
+
+startBot;
+void fetchSpoilers();
