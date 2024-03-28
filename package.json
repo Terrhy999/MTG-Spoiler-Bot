@@ -29,5 +29,9 @@
     "prettier": "3.2.5",
     "typescript": "^5.4.3",
     "typescript-eslint": "^7.4.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5"
   }
 }
