@@ -1,6 +1,7 @@
-import Discord = require("discord.js");
-import fetch from "node-fetch";
 import "dotenv/config";
+import Discord from "discord.js";
+import fetch from "node-fetch";
+import { JSDOM } from "jsdom";
 
 const startBot = () => {
   const client = new Discord.Client({
@@ -40,11 +41,30 @@ const startBot = () => {
 };
 
 const fetchSpoilers = async () => {
+  const baseURL = "https://www.mythicspoiler.com/";
   const response = await fetch(
     "https://www.mythicspoiler.com/newspoilers.html",
   );
-  const body = await response.text();
-  console.log(body);
+  const html = await response.text();
+  const dom = new JSDOM(html);
+  // dom.window.document
+  //   .querySelectorAll('div.grid-span > font[size="6"][color="FFFFFF"]')
+  //   .forEach((element) => {
+  //     console.log(element.textContent?.toLowerCase().trim().replace(/\n/g, ""));
+  //   });
+  const latest = dom.window.document.querySelector(
+    'div.grid-span > font[size="6"][color="FFFFFF"]',
+  );
+
+  const div = latest?.parentElement;
+  const table = div?.nextElementSibling;
+  const cardImgs = table?.querySelectorAll("div.grid-card a img");
+  cardImgs?.forEach((card) => {
+    console.log(
+      card.getAttribute("src")?.toLocaleLowerCase().trim().replace(/\n/g, ""),
+    );
+  });
+  // console.log(latest?.textContent?.toLowerCase().trim().replace(/\n/g, ""));
 };
 
 startBot;
