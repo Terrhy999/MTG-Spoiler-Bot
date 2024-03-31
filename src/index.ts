@@ -1,6 +1,5 @@
 import "dotenv/config";
 import Discord, { TextChannel } from "discord.js";
-import { EmbedBuilder } from "discord.js";
 import fetch from "node-fetch";
 import { JSDOM } from "jsdom";
 import fs from "fs";
@@ -29,9 +28,7 @@ const startBot = () => {
             if (channel instanceof TextChannel) {
               // Post each image to the channel
               imageUrls.forEach((url) => {
-                const embed = new EmbedBuilder().setImage(`${baseURL}${url}`);
-
-                void channel.send({ embeds: [embed] });
+                void channel.send({ files: [`${baseURL}${url}`] });
               });
             }
           })
