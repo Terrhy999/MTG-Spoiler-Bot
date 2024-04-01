@@ -115,7 +115,7 @@ function parseDateString(dateString: string) {
     jan: 0,
     feb: 1,
     mar: 2,
-    apr: 3,
+    april: 3,
     may: 4,
     jun: 5,
     jul: 6,
