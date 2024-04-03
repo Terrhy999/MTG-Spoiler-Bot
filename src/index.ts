@@ -18,7 +18,7 @@ const startBot = () => {
     setInterval(
       () => {
         fetchSpoilers()
-          .then((imageUrls) => {
+          .then(async (cards) => {
             // Get the channel ID where you want to post the images
             const channelId = process.env["CHANNEL_ID"]!;
 
@@ -26,17 +26,35 @@ const startBot = () => {
             const channel = client.channels.cache.get(channelId);
 
             if (channel instanceof TextChannel) {
-              // Post each image to the channel
-              imageUrls.forEach((url) => {
-                void channel.send({ files: [`${baseURL}${url}`] });
-              });
+              const cardChunks = [];
+              for (let i = 0; i < cards.length; i += 10) {
+                cardChunks.push(cards.slice(i, i + 10));
+              }
+
+              for (const chunk of cardChunks) {
+                const files = chunk.map((card) => card.src);
+                const links = chunk.map((card) => card.href);
+
+                const spoilerMessage = await channel.send({
+                  files: files.map((file) => `${baseURL}${file}`),
+                });
+
+                const spoilerThread = await spoilerMessage.startThread({
+                  autoArchiveDuration: 60,
+                  name: "Fresh Spoilers",
+                });
+
+                void spoilerThread.send(
+                  links.map((link) => `${baseURL}${link}`).join("\n"),
+                );
+              }
             }
           })
           .catch((error) => {
             console.error("Error fetching or posting images:", error);
           });
       },
-      10 * 60 * 1000,
+      15 * 60 * 1000,
     ); // 15 minutes in milliseconds
   });
 
@@ -71,18 +89,38 @@ const fetchSpoilers = async () => {
   ) {
     const cardGrid = dateDiv?.nextElementSibling; // card-grid for date
     const cardImgs = cardGrid?.querySelectorAll("div.grid-card a img");
-    const cardSrcs = Array.from(cardImgs!)
-      .map((element) => element.getAttribute("src"))
-      .filter((src) => !!src) // Filter out null values
-      .map((src) => src!.toLowerCase().trim());
+
+    const cards = Array.from(cardImgs!)
+      .map((element) => {
+        const href = element.parentElement
+          ?.getAttribute("href")
+          ?.toLowerCase()
+          .trim();
+        const src = element.getAttribute("src")?.toLowerCase().trim();
+
+        if (href && src) {
+          return { href, src };
+        } else {
+          return null;
+        }
+      })
+      .filter((card): card is { href: string; src: string } => card !== null);
+
     const spoiledCards = readSpoiledCards(spoiledCardsPath);
 
-    const newCards = cardSrcs.filter((src) => !spoiledCards.includes(src)); // array of todays cards not in spoiledCards.txt
+    const newCards = cards.filter((card) => !spoiledCards.includes(card.href));
+    console.log(newCards);
 
     if (newCards.length > 0) {
       try {
-        fs.appendFileSync("spoiledCards.txt", newCards.join("\n") + "\n");
-        console.log("New image sources added to spoiledCards.txt:", newCards);
+        fs.appendFileSync(
+          "spoiledCards.txt",
+          newCards.map((card) => card.href).join("\n") + "\n",
+        );
+        console.log(
+          "New image sources added to spoiledCards.txt:",
+          newCards.map((card) => card.href),
+        );
       } catch (err) {
         console.error("Error appending new images to spoiledCards.txt:", err);
       }
