@@ -54,7 +54,7 @@ const startBot = () => {
             console.error("Error fetching or posting images:", error);
           });
       },
-      1 * 30 * 1000,
+      15 * 60 * 1000,
     ); // 15 minutes in milliseconds
   });
 
