@@ -54,7 +54,7 @@ const startBot = () => {
             console.error("Error fetching or posting images:", error);
           });
       },
-      15 * 60 * 1000,
+      1 * 30 * 1000,
     ); // 15 minutes in milliseconds
   });
 
@@ -73,14 +73,20 @@ const fetchSpoilers = async () => {
     'div.grid-span > font[size="6"][color="FFFFFF"]',
   )?.parentElement;
 
+  console.log(dateDiv);
+  console.log(dateDiv?.textContent);
+
   const dateString = dateDiv?.textContent
     ?.trim() // Remove leading and trailing whitespace
     ?.replace(/\n+/g, "\n") // Replace multiple newlines with a single newline
     ?.split("\n")[0] // Get the first line
     ?.toLocaleLowerCase(); // Convert to lowercase
 
+  console.log(dateString);
+
   if (!dateString) throw new Error("couldn't parse datestring");
   const latestDate = parseDateString(dateString);
+  console.log(latestDate);
   const todayDate = new Date();
 
   if (
@@ -159,6 +165,7 @@ function parseDateString(dateString: string) {
     july: 6,
     aug: 7,
     sept: 8,
+    sep: 8,
     oct: 9,
     nov: 10,
     dec: 11,
